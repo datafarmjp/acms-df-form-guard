@@ -1,0 +1,14 @@
+.js-df-form-guard-form textarea {
+  min-height: 120px;
+}
+
+.js-df-form-guard-detail .acms-admin-text-muted {
+  margin-top: 6px;
+}
+
+.df-form-guard-reference-control {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}

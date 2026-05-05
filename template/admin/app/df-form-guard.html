@@ -1,0 +1,97 @@
+<!-- DF_FormGuard managed admin app template -->
+<header>
+  <div>
+    @include("/admin/topicpath.html")
+  </div>
+  <div>
+    <h1 class="acms-admin-admin-title"><!--T-->DFフォームガード設定<!--/T--></h1>
+  </div>
+</header>
+
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.0">
+
+<!-- BEGIN_MODULE Admin_Config -->
+<!-- BEGIN_IF [{notice_mess}/nem/] -->
+<div role="alert" class="acms-admin-alert acms-admin-alert-info acms-admin-alert-icon">
+  <span class="acms-admin-icon acms-admin-icon-news acms-admin-alert-icon-before" aria-hidden="true"></span>
+  <button type="button" class="js-acms-alert-close acms-admin-alert-icon-after">×</button>
+  <!--T-->DFフォームガード設定を保存しました<!--/T-->
+</div>
+<!-- END_IF -->
+
+<!-- BEGIN msg#error -->
+<div role="alert" class="acms-admin-alert acms-admin-alert-danger acms-admin-alert-icon">
+  <span class="acms-admin-icon acms-admin-icon-attention acms-admin-alert-icon-before" aria-hidden="true"></span>
+  <button type="button" class="js-acms-alert-close acms-admin-alert-icon-after" aria-label="アラートを閉じる">×</button>
+  <!--T-->DFフォームガード設定を保存できませんでした。<!--/T-->
+</div>
+<!-- END msg#error -->
+
+<form action="" method="post" class="acms-admin-form js-df-form-guard-admin">
+  <div class="js-acms_fix_marker acms_fix_bg">
+    <div class="acms_fix_bg_index">
+      <input type="submit" name="ACMS_POST_Config" value="<!--T-->保存<!--/T-->" class="acms-admin-btn-admin acms-admin-btn-admin-primary acms-admin-btn-admin-save js-saving-splash">
+      @include("/admin/config/action.html")
+    </div>
+  </div>
+
+  <h2 class="acms-admin-admin-title2"><!--T-->OpenAI接続設定<!--/T--></h2>
+  <p class="acms-admin-text-muted">フォームごとの判定設定は、フォームID編集画面の「FormGuard」セクションで設定します。</p>
+
+  <table class="adminTable acms-admin-table-admin-edit">
+    <tr>
+      <th><!--T-->OpenAI APIキー<!--/T--></th>
+      <td>
+        <input type="password" name="df_form_guard_openai_api_key" value="" class="acms-admin-form-width-large js-df-form-guard-api-key" autocomplete="off" placeholder="変更するときだけ入力">
+        <p class="acms-admin-text-muted">空欄保存では保存済みのキーを維持します。未設定の場合は <code>DF_FORM_GUARD_OPENAI_API_KEY</code> または <code>OPENAI_API_KEY</code> を使用します。</p>
+      </td>
+    </tr>
+    <tr>
+      <th><!--T-->OpenAIモデル<!--/T--></th>
+      <td>
+        <input type="text" name="df_form_guard_openai_model" value="{df_form_guard_openai_model}" class="acms-admin-form-width-medium" placeholder="gpt-4o-mini">
+        <input type="hidden" name="config[]" value="df_form_guard_openai_model">
+      </td>
+    </tr>
+    <tr>
+      <th><!--T-->AIタイムアウト<!--/T--></th>
+      <td>
+        <input type="number" name="df_form_guard_ai_timeout_seconds" value="{df_form_guard_ai_timeout_seconds}" min="1" max="60" step="1" class="acms-admin-form-width-mini" placeholder="10">
+        <input type="hidden" name="config[]" value="df_form_guard_ai_timeout_seconds">
+      </td>
+    </tr>
+    <tr>
+      <th><!--T-->debugモード<!--/T--></th>
+      <td>
+        <input type="hidden" name="df_form_guard_debug" value="{df_form_guard_debug}" class="js-df-form-guard-debug-value">
+        <label class="acms-admin-form-checkbox">
+          <input type="checkbox" value="enabled" class="js-df-form-guard-debug-toggle" data-config-value="{df_form_guard_debug}">
+          <i class="acms-admin-ico-checkbox"></i>
+          <!--T-->判定概要をログに出力する<!--/T-->
+        </label>
+        <input type="hidden" name="config[]" value="df_form_guard_debug">
+        <p class="acms-admin-text-muted">本文全文やAPIキーはログに出しません。</p>
+      </td>
+    </tr>
+  </table>
+
+  <h2 class="acms-admin-admin-title2"><!--T-->AI接続チェック<!--/T--></h2>
+  <table class="adminTable acms-admin-table-admin-edit">
+    <tr>
+      <th><!--T-->テスト内容<!--/T--></th>
+      <td>
+        <textarea class="acms-admin-form-width-full js-df-form-guard-test-text" rows="5" placeholder="テスト判定したいフォーム内容を入力"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <th><!--T-->接続確認<!--/T--></th>
+      <td>
+        <button type="button" class="acms-admin-btn-admin js-df-form-guard-ai-check"><!--T-->AI接続を確認<!--/T--></button>
+        <p class="js-df-form-guard-ai-check-result acms-admin-text-muted" role="status" aria-live="polite"></p>
+      </td>
+    </tr>
+  </table>
+</form>
+<!-- END_MODULE Admin_Config -->
+
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.0"></script>

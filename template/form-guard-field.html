@@ -1,0 +1,97 @@
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.1">
+
+<h3 class="acms-admin-admin-title2">FormGuard</h3>
+<div class="js-arg_reference_remove js-arg_reference_dummy acms-admin-label-group acms-admin-inline-space" data-arg="" style="display:none;">
+  <span class="acms-admin-label acms-admin-label-large"></span><a class="acms-admin-label acms-admin-label-large acms-admin-label-side">x</a>
+</div>
+
+<table class="adminTable acms-admin-table-admin-edit js-df-form-guard-form" id="js-arg_reference">
+  <tr>
+    <th>FormGuardを利用する</th>
+    <td>
+      <input type="hidden" name="df_form_guard_enabled" value="disabled">
+      <label class="acms-admin-form-checkbox">
+        <input type="checkbox" name="df_form_guard_enabled" value="enabled" {df_form_guard_enabled:checked#enabled} class="js-df-form-guard-enabled" data-current="{df_form_guard_enabled}">
+        <i class="acms-admin-ico-checkbox"></i>
+        このフォームでAI判定を行う
+      </label>
+      <input type="hidden" name="form[]" value="df_form_guard_enabled">
+    </td>
+  </tr>
+  <tbody class="js-df-form-guard-detail">
+    <tr>
+      <th>追加判定ルール</th>
+      <td>
+        <textarea name="df_form_guard_prompt" class="acms-admin-form-width-full" rows="6" placeholder="例）SEO営業、広告営業、制作営業、営業代行はNG。既存顧客からの相談や見積依頼はOK。">{df_form_guard_prompt}</textarea>
+        <input type="hidden" name="form[]" value="df_form_guard_prompt">
+        <p class="acms-admin-text-muted">共通の基本判定方針に、このフォーム固有のルールとして追加されます。</p>
+      </td>
+    </tr>
+    <tr>
+      <th>NG時の管理者宛メール</th>
+      <td>
+        <input type="hidden" name="df_form_guard_block_admin_mail_on_ng" value="disabled">
+        <label class="acms-admin-form-checkbox">
+          <input type="checkbox" name="df_form_guard_block_admin_mail_on_ng" value="enabled" {df_form_guard_block_admin_mail_on_ng:checked#enabled} class="js-df-form-guard-default-on" data-current="{df_form_guard_block_admin_mail_on_ng}">
+          <i class="acms-admin-ico-checkbox"></i>
+          NG判定のとき管理者宛メールを止める
+        </label>
+        <input type="hidden" name="form[]" value="df_form_guard_block_admin_mail_on_ng">
+      </td>
+    </tr>
+    <tr>
+      <th>ERROR時の動作</th>
+      <td>
+        <select name="df_form_guard_error_action" class="acms-admin-form-width-medium js-df-form-guard-error-action">
+          <option value="send"{df_form_guard_error_action:selected#send}>送信する</option>
+          <option value="block"{df_form_guard_error_action:selected#block}>止める</option>
+        </select>
+        <input type="hidden" name="form[]" value="df_form_guard_error_action">
+        <p class="acms-admin-text-muted">初期値は「送信する」です。AI失敗時に正規問い合わせを落とさないためです。</p>
+      </td>
+    </tr>
+    <tr>
+      <th>判定対象の最大文字数</th>
+      <td>
+        <input type="number" name="df_form_guard_max_input_chars" value="{df_form_guard_max_input_chars}" min="500" max="20000" step="500" class="acms-admin-form-width-mini js-df-form-guard-max-input" placeholder="4000">
+        <input type="hidden" name="form[]" value="df_form_guard_max_input_chars">
+      </td>
+    </tr>
+    <tr id="js-arg_guidance_df_form_guard_reference_eids" class="js-arg_guidance">
+      <th>判断材料エントリー</th>
+      <td>
+        <div class="df-form-guard-reference-control">
+          <button type="button" name="eid" class="js-arg_reference_trigger acms-admin-btn acms-admin-btn-info acms-admin-inline-space" data-bid="%{BID}">ID参照</button>
+          <a href="#" class="js-arg_reference_toggle js-target_df_form_guard_reference_eids acms-admin-inline-space"><span class="acms-admin-icon-control-edit"></span></a>
+          <input type="text" name="df_form_guard_reference_eids" value="{df_form_guard_reference_eids}" class="argEdit js-arg_guidance_edit js-df-form-guard-reference-eids acms-admin-form-width-medium" data-multi="on" placeholder="例）12,34,56">
+          <div class="argLabel acms-admin-inline js-arg_guidance_label js-df-form-guard-reference-labels">
+            <span class="acms-admin-icon-blog-children js-arg_guidance_multi_icon js-arg_guidance_multi_icon_df_form_guard_reference_eids js-acms-tooltip-hover acms-admin-inline-space" data-acms-tooltip="複数のIDを指定可能です"></span>
+          </div>
+        </div>
+        <input type="hidden" name="form[]" value="df_form_guard_reference_eids">
+        <p class="acms-admin-text-muted">会社情報、サービス紹介、FAQなど、正規問い合わせの判断材料になる公開エントリーを複数指定できます。</p>
+      </td>
+    </tr>
+    <tr>
+      <th>判断材料の最大文字数</th>
+      <td>
+        <input type="number" name="df_form_guard_reference_max_chars" value="{df_form_guard_reference_max_chars}" min="500" max="20000" step="500" class="acms-admin-form-width-mini js-df-form-guard-reference-max" placeholder="3000">
+        <input type="hidden" name="form[]" value="df_form_guard_reference_max_chars">
+      </td>
+    </tr>
+    <tr>
+      <th>判定理由の保存</th>
+      <td>
+        <input type="hidden" name="df_form_guard_store_reason" value="disabled">
+        <label class="acms-admin-form-checkbox">
+          <input type="checkbox" name="df_form_guard_store_reason" value="enabled" {df_form_guard_store_reason:checked#enabled} class="js-df-form-guard-default-on" data-current="{df_form_guard_store_reason}">
+          <i class="acms-admin-ico-checkbox"></i>
+          フォーム履歴に判定理由を保存する
+        </label>
+        <input type="hidden" name="form[]" value="df_form_guard_store_reason">
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.1"></script>
