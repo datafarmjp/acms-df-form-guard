@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.1.3
 
-- Added a reference to the shared Datafarm a-blog cms extension app publishing guidelines.
+- Added `tools/release.sh` for ZIP packaging and GitHub Release publishing.
+- Added `tools/release-json.php` and `RELEASE_MANIFEST.txt` for release metadata and package file control.
+- Updated README with release packaging instructions.
+
+## Unreleased
 
 ## 0.1.2
 
