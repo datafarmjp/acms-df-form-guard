@@ -11,17 +11,12 @@ class ServiceProvider extends ACMS_App
     /**
      * @var string
      */
-    private $adminTemplateMarker = 'DF_FormGuard managed admin app template';
-
-    /**
-     * @var string
-     */
     private $postWrapperMarker = 'DF_FormGuard managed POST wrapper';
 
     /**
      * @var string
      */
-    public $version = '0.1.1';
+    public $version = '0.1.2';
 
     /**
      * @var string
@@ -53,7 +48,7 @@ class ServiceProvider extends ACMS_App
      */
     public function init()
     {
-        $this->syncAdminTemplate();
+        $this->injectAdminTemplate();
         $this->syncPostWrappers();
 
         HookFactory::singleton()->attach('DF_FormGuard', new Hook());
@@ -77,7 +72,6 @@ class ServiceProvider extends ACMS_App
      */
     public function install()
     {
-        $this->syncAdminTemplate();
         $this->syncPostWrappers();
     }
 
@@ -93,7 +87,7 @@ class ServiceProvider extends ACMS_App
      */
     public function update()
     {
-        $this->syncAdminTemplate();
+        $this->injectAdminTemplate();
         $this->syncPostWrappers();
         return true;
     }
@@ -103,7 +97,7 @@ class ServiceProvider extends ACMS_App
      */
     public function activate()
     {
-        $this->syncAdminTemplate();
+        $this->injectAdminTemplate();
         $this->syncPostWrappers();
         return true;
     }
@@ -119,37 +113,40 @@ class ServiceProvider extends ACMS_App
     /**
      * @return void
      */
-    private function syncAdminTemplate()
+    private function injectAdminTemplate()
     {
-        $source = PLUGIN_LIB_DIR . 'DF_FormGuard/template/admin/app/df-form-guard.html';
         $themesDir = defined('THEMES_DIR') ? THEMES_DIR : 'themes/';
-        $dest = SCRIPT_DIR . ltrim($themesDir, '/') . 'system/admin/app/df-form-guard.html';
-
-        if (!is_file($source)) {
+        $legacyTemplate = SCRIPT_DIR . ltrim($themesDir, '/') . 'system/admin/app/df-form-guard.html';
+        if (is_file($legacyTemplate) && !$this->archiveLegacyAdminTemplate($legacyTemplate)) {
             return;
         }
 
-        $dir = dirname($dest);
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
-        }
-        if (!is_dir($dir)) {
-            return;
+        InjectTemplate::singleton()->add(
+            'admin-main',
+            PLUGIN_DIR . 'DF_FormGuard/template/admin/app/df-form-guard.html'
+        );
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    private function archiveLegacyAdminTemplate($path)
+    {
+        $content = (string)@file_get_contents($path);
+        if ($content === '' || strpos($content, 'DF_FormGuard managed admin app template') === false) {
+            return false;
         }
 
-        if (is_file($dest)) {
-            if (!is_writable($dest)) {
-                return;
-            }
-            $content = (string)@file_get_contents($dest);
-            if (strpos($content, $this->adminTemplateMarker) === false) {
-                return;
-            }
-        } elseif (!is_writable($dir)) {
-            return;
+        $base = $path . '.df-form-guard-backup-' . date('YmdHis');
+        $backup = $base;
+        $index = 1;
+        while (is_file($backup)) {
+            $backup = $base . '-' . $index;
+            $index++;
         }
 
-        @copy($source, $dest);
+        return @rename($path, $backup);
     }
 
     /**

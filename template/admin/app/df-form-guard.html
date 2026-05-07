@@ -1,4 +1,5 @@
 <!-- DF_FormGuard managed admin app template -->
+<!-- BEGIN_IF [%{ADMIN}/eq/app_df-form-guard] -->
 <header>
   <div>
     @include("/admin/topicpath.html")
@@ -8,7 +9,7 @@
   </div>
 </header>
 
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.0">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.2">
 
 <!-- BEGIN_MODULE Admin_Config -->
 <!-- BEGIN_IF [{notice_mess}/nem/] -->
@@ -94,4 +95,5 @@
 </form>
 <!-- END_MODULE Admin_Config -->
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.0"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.2"></script>
+<!-- END_IF -->

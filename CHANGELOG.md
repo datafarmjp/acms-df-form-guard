@@ -4,6 +4,12 @@
 
 - Added a reference to the shared Datafarm a-blog cms extension app publishing guidelines.
 
+## 0.1.2
+
+- Switched the admin app screen from system theme copy to `InjectTemplate` on `admin-main`.
+- Added conditional rendering for `app_df-form-guard` only.
+- Added legacy managed admin template archive handling.
+
 ## 0.1.1
 
 - Fixed injected form settings restoration by adding a form settings JSON POST.
