@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.1">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.4">
 
 <h3 class="acms-admin-admin-title2">FormGuard</h3>
 <div class="js-arg_reference_remove js-arg_reference_dummy acms-admin-label-group acms-admin-inline-space" data-arg="" style="display:none;">
@@ -24,7 +24,7 @@
       <td>
         <textarea name="df_form_guard_prompt" class="acms-admin-form-width-full" rows="6" placeholder="例）SEO営業、広告営業、制作営業、営業代行はNG。既存顧客からの相談や見積依頼はOK。">{df_form_guard_prompt}</textarea>
         <input type="hidden" name="form[]" value="df_form_guard_prompt">
-        <p class="acms-admin-text-muted">共通の基本判定方針に、このフォーム固有のルールとして追加されます。</p>
+        <p class="acms-admin-text-muted">プラグイン側で固定している基本方針に、このフォーム固有の補足ルールとして追加されます。基本方針そのものは変更されません。</p>
       </td>
     </tr>
     <tr>
@@ -43,11 +43,11 @@
       <th>ERROR時の動作</th>
       <td>
         <select name="df_form_guard_error_action" class="acms-admin-form-width-medium js-df-form-guard-error-action">
-          <option value="send"{df_form_guard_error_action:selected#send}>送信する</option>
+          <option value="send"{df_form_guard_error_action:selected#send}>送信する（おすすめ）</option>
           <option value="block"{df_form_guard_error_action:selected#block}>止める</option>
         </select>
         <input type="hidden" name="form[]" value="df_form_guard_error_action">
-        <p class="acms-admin-text-muted">初期値は「送信する」です。AI失敗時に正規問い合わせを落とさないためです。</p>
+        <p class="acms-admin-text-muted">初期値は「送信する」です。AI失敗・タイムアウト時に正規問い合わせを落とさないため、この設定をおすすめします。</p>
       </td>
     </tr>
     <tr>
@@ -69,7 +69,7 @@
           </div>
         </div>
         <input type="hidden" name="form[]" value="df_form_guard_reference_eids">
-        <p class="acms-admin-text-muted">会社情報、サービス紹介、FAQなど、正規問い合わせの判断材料になる公開エントリーを複数指定できます。</p>
+        <p class="acms-admin-text-muted">会社情報、サービス紹介、FAQなど、正規問い合わせをOK寄りに判断するための公開エントリーを複数指定できます。関係が薄いことだけを理由にNGにはしません。</p>
       </td>
     </tr>
     <tr>
@@ -89,9 +89,10 @@
           フォーム履歴に判定理由を保存する
         </label>
         <input type="hidden" name="form[]" value="df_form_guard_store_reason">
+        <p class="acms-admin-text-muted">判定理由には送信内容に由来する情報が含まれる可能性があります。運用上必要なフォームだけで有効にしてください。</p>
       </td>
     </tr>
   </tbody>
 </table>
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.1"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.4"></script>

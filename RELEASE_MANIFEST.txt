@@ -1,23 +1,40 @@
-./CHANGELOG.md
-./Hook.php
-./README.md
-./ServiceProvider.php
-./POST/FormGuardAiConnectionCheck.php
-./POST/FormGuardFormSettings.php
-./POST/FormGuardSettings.php
-./Services/Classifier.php
-./Services/DebugLogger.php
-./Services/Decision.php
-./Services/FormPayload.php
-./Services/FormSettings.php
-./Services/ReferenceEntries.php
-./Services/Settings.php
-./assets/df-form-guard-admin.css
-./assets/df-form-guard-admin.js
-./assets/df-form-guard-form.css
-./assets/df-form-guard-form.js
-./template/admin/app/df-form-guard.html
-./template/form-guard-field.html
-./template/post/FormGuardAiConnectionCheck.php
-./template/post/FormGuardFormSettings.php
-./template/post/FormGuardSettings.php
+# DF_FormGuard 0.1.4 release manifest
+# Plugin paths are relative to this repository root.
+
+AGENTS.md
+CHANGELOG.md
+Hook.php
+LICENSE
+README.md
+RELEASE_MANIFEST.txt
+ServiceProvider.php
+POST/FormGuardAiConnectionCheck.php
+POST/FormGuardFormSettings.php
+POST/FormGuardSettings.php
+Services/Classifier.php
+Services/DebugLogger.php
+Services/Decision.php
+Services/FormPayload.php
+Services/FormSettings.php
+Services/ReferenceEntries.php
+Services/Settings.php
+assets/df-form-guard-admin.css
+assets/df-form-guard-admin.js
+assets/df-form-guard-form.css
+assets/df-form-guard-form.js
+docs/POC_NOTES.md
+template/admin/app/df-form-guard.html
+template/form-guard-field.html
+template/post/FormGuardAiConnectionCheck.php
+template/post/FormGuardFormSettings.php
+template/post/FormGuardSettings.php
+tools/release-check.sh
+tools/release-json.php
+tools/release.sh
+
+# Synced/generated files.
+# These paths are relative to an a-blog cms project root and are checked only
+# when this repository is installed as extension/plugins/DF_FormGuard.
+@project extension/acms/POST/FormGuardAiConnectionCheck.php
+@project extension/acms/POST/FormGuardFormSettings.php
+@project extension/acms/POST/FormGuardSettings.php

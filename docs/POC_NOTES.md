@@ -1,5 +1,12 @@
 # DF_FormGuard PoC Notes
 
+## Shared References
+
+Before changing release, public README, or admin app behavior, refer to:
+
+- `../_shared/DF_EXTENSION_APP_GUIDELINES.md`
+- `../_shared/DF_EXTENSION_APP_ADMIN_TEMPLATE_HOWTO.md`
+
 ## Hook Timing
 
 `ACMS_POST_Form_Submit::post()` calls `beforeSendAutoReply` after validation and before both administrator email and auto-reply email are sent.

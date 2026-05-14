@@ -7,11 +7,12 @@ Usage:
   tools/release.sh VERSION
 
 Example:
-  tools/release.sh 0.1.2
+  tools/release.sh 0.1.4
 
 This script:
   - verifies the worktree is clean
   - verifies ServiceProvider.php contains the requested version
+  - runs tools/release-check.sh
   - creates /private/tmp/DF_FormGuard-vVERSION.zip
   - creates and pushes tag vVERSION when missing
   - creates or updates GitHub Release vVERSION with the ZIP asset
@@ -36,7 +37,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Version must look like 0.1.2" >&2
+  echo "Version must look like 0.1.4" >&2
   exit 1
 fi
 
@@ -67,6 +68,12 @@ if ! grep -Fq "public \$version = '$VERSION';" ServiceProvider.php; then
   exit 1
 fi
 
+CHANGELOG_ANCHOR="v${VERSION//./-}"
+if ! grep -q "id=\"$CHANGELOG_ANCHOR\"" CHANGELOG.md; then
+  echo "CHANGELOG.md does not contain <a id=\"$CHANGELOG_ANCHOR\"></a>." >&2
+  exit 1
+fi
+
 if ! command -v gh >/dev/null 2>&1; then
   echo "gh command was not found. Install GitHub CLI first." >&2
   exit 1
@@ -88,6 +95,7 @@ if [ ! -f RELEASE_MANIFEST.txt ]; then
 fi
 
 gh auth status >/dev/null
+bash tools/release-check.sh "$VERSION"
 
 rm -rf "$PACKAGE_DIR"
 mkdir -p "$PACKAGE_DIR/$PRODUCT"
@@ -96,35 +104,13 @@ while IFS= read -r path; do
   [ -n "$path" ] || continue
   mkdir -p "$PACKAGE_DIR/$PRODUCT/$(dirname "$path")"
   cp -p "$ROOT_DIR/$path" "$PACKAGE_DIR/$PRODUCT/$path"
-done < <(grep -Ev '^[[:space:]]*($|#)' RELEASE_MANIFEST.txt | sed 's#^\./##')
+done < <(grep -Ev '^[[:space:]]*($|#|@project[[:space:]])' RELEASE_MANIFEST.txt | sed 's#^\./##')
 
 rm -f "$ZIP_PATH"
 (
   cd "$PACKAGE_DIR"
   zip -qr "$ZIP_PATH" "$PRODUCT"
 )
-
-{
-  awk "/^## $VERSION/{flag=1; next} /^## /{flag=0} flag {print}" CHANGELOG.md | sed '/^$/d'
-  cat <<EOF
-
-## インストール
-
-1. \`DF_FormGuard-$TAG.zip\` をダウンロードします。
-2. ZIPを展開し、\`DF_FormGuard\` フォルダを \`extension/plugins/\` に配置します。
-3. a-blog cms の拡張アプリ管理から \`DFフォームガード\` をインストール・有効化します。
-
-配置例:
-
-\`\`\`text
-extension/plugins/DF_FormGuard/
-\`\`\`
-
-## 注意
-
-このプラグインは a-blog cms 本体を含みません。利用には別途 a-blog cms の適切なライセンスが必要です。
-EOF
-} >"$NOTES_PATH"
 
 "$PHP_BIN" tools/release-json.php \
   --product "$PRODUCT" \
@@ -133,6 +119,31 @@ EOF
   --repo "$REPO" \
   --zip-name "$(basename "$ZIP_PATH")" \
   --output "$JSON_PATH"
+
+"$PHP_BIN" -r '
+$json = json_decode(file_get_contents($argv[1]), true);
+if (!is_array($json)) {
+    fwrite(STDERR, "Failed to read release JSON.\n");
+    exit(1);
+}
+$zip = (string)($json["download_url"] ?? "");
+$changelog = (string)($json["changelog_url"] ?? "");
+$body = trim((string)($json["body_markdown"] ?? ""));
+$zipName = basename($zip);
+echo "## 変更内容\n\n";
+echo ($body !== "" ? $body : "- 変更内容はCHANGELOG.mdを確認してください。") . "\n\n";
+if ($changelog !== "") {
+    echo "[CHANGELOG.md の該当箇所を開く]({$changelog})\n\n";
+}
+echo "## インストール\n\n";
+echo "1. `{$zipName}` をダウンロードします。\n";
+echo "2. ZIPを展開し、`DF_FormGuard` フォルダを `extension/plugins/` に配置します。\n";
+echo "3. a-blog cms の拡張アプリ管理から `DFフォームガード` をインストール・有効化します。\n\n";
+echo "配置例:\n\n";
+echo "```text\nextension/plugins/DF_FormGuard/\n```\n\n";
+echo "## 注意\n\n";
+echo "このプラグインは a-blog cms 本体を含みません。利用には別途 a-blog cms の適切なライセンスが必要です。\n";
+' "$JSON_PATH" > "$NOTES_PATH"
 
 git fetch --tags origin >/dev/null 2>&1 || true
 

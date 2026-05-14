@@ -5,3 +5,29 @@
 .js-df-form-guard-admin textarea {
   min-height: 96px;
 }
+@charset "UTF-8";
+
+.df-form-guard-update-notice[hidden] {
+  display: none !important;
+}
+
+.df-form-guard-consultation {
+  margin-top: 32px;
+  padding: 20px;
+  background: #eef8f1;
+  border: 1px solid #c9e8d1;
+  border-radius: 4px;
+}
+
+.df-form-guard-consultation ul {
+  margin: 10px 0 12px;
+  padding-left: 1.5em;
+}
+
+.df-form-guard-consultation__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
