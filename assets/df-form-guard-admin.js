@@ -9,7 +9,7 @@
     var debugValue = document.querySelector('.js-df-form-guard-debug-value');
     var checkButton = document.querySelector('.js-df-form-guard-ai-check');
     var checkResult = document.querySelector('.js-df-form-guard-ai-check-result');
-    var testText = document.querySelector('.js-df-form-guard-test-text');
+    var checkLast = document.querySelector('.js-df-form-guard-ai-check-last');
 
     if (!root) {
       return;
@@ -18,7 +18,7 @@
     setNumberDefault(timeout, 1, 60, 10);
     setupApiKeyConfig(apiKey);
     setupDebug(debugToggle, debugValue);
-    setupConnectionCheck(checkButton, checkResult, testText);
+    setupConnectionCheck(checkButton, checkResult, checkLast);
     setupUpdateNotice();
   });
 
@@ -51,7 +51,7 @@
     });
   }
 
-  function setupConnectionCheck(button, result, testText) {
+  function setupConnectionCheck(button, result, lastChecked) {
     if (!button || !result) {
       return;
     }
@@ -65,7 +65,6 @@
         function(action) {
           var formData = new FormData();
           formData.append(action, 'AI接続確認');
-          formData.append('test_text', testText ? testText.value : '');
           appendCsrfToken(formData);
           return formData;
         },
@@ -77,6 +76,9 @@
             return;
           }
           renderConnectionResult(result, json, true, 'AI接続に成功しました。');
+          if (lastChecked) {
+            lastChecked.textContent = json.last_checked_at ? ('最終確認: ' + json.last_checked_at) : '未確認';
+          }
           logDebug('AI connection check response:', json);
         })
         .catch(function(error) {
@@ -114,10 +116,10 @@
     if (normalized === 'constant') {
       return '互換定数';
     }
-    if (normalized === 'environment') {
+    if (normalized === 'env' || normalized === 'environment') {
       return '環境変数';
     }
-    if (normalized === 'none' || normalized === '') {
+    if (normalized === 'missing' || normalized === 'none' || normalized === '') {
       return '未設定';
     }
     return normalized;

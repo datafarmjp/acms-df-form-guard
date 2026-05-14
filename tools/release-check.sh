@@ -6,7 +6,7 @@ PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MANIFEST="$PLUGIN_DIR/RELEASE_MANIFEST.txt"
 ADMIN_TEMPLATE="$PLUGIN_DIR/template/admin/app/df-form-guard.html"
 FORM_TEMPLATE="$PLUGIN_DIR/template/form-guard-field.html"
-VERSION="${1:-0.1.4}"
+VERSION="${1:-0.1.6}"
 FAILURES=0
 
 case "$PLUGIN_DIR" in
@@ -208,6 +208,7 @@ check_admin_template() {
     contains "$ADMIN_TEMPLATE" "js-df-form-guard-update-notice" &&
     contains "$ADMIN_TEMPLATE" "https://www.jicoo.com/event_types/9KVr0WMdvpEl" &&
     contains "$ADMIN_TEMPLATE" "https://datafarm.jp/contact" &&
+    contains "$ADMIN_TEMPLATE" "https://buy.stripe.com/4gM3cu8ZGggTdyL70O9ws04" &&
     contains "$ADMIN_TEMPLATE" "rel=\"noopener\"" &&
     not_contains_regex "syncAdminTemplate" \
       "$PLUGIN_DIR" \

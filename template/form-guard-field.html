@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.4">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.6">
 
 <h3 class="acms-admin-admin-title2">FormGuard</h3>
 <div class="js-arg_reference_remove js-arg_reference_dummy acms-admin-label-group acms-admin-inline-space" data-arg="" style="display:none;">
@@ -7,20 +7,20 @@
 
 <table class="adminTable acms-admin-table-admin-edit js-df-form-guard-form" id="js-arg_reference">
   <tr>
-    <th>FormGuardを利用する</th>
+    <th>FormGuardを利用する<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="AI迷惑メール・営業メール判定をこのフォームで有効にします。"></i></th>
     <td>
       <input type="hidden" name="df_form_guard_enabled" value="disabled">
       <label class="acms-admin-form-checkbox">
         <input type="checkbox" name="df_form_guard_enabled" value="enabled" {df_form_guard_enabled:checked#enabled} class="js-df-form-guard-enabled" data-current="{df_form_guard_enabled}">
         <i class="acms-admin-ico-checkbox"></i>
-        このフォームでAI判定を行う
+        このフォームでAI迷惑メール・営業メール判定を行う
       </label>
       <input type="hidden" name="form[]" value="df_form_guard_enabled">
     </td>
   </tr>
   <tbody class="js-df-form-guard-detail">
     <tr>
-      <th>追加判定ルール</th>
+      <th>追加判定ルール<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="基本方針に加える、このフォーム固有の補足ルールです。"></i></th>
       <td>
         <textarea name="df_form_guard_prompt" class="acms-admin-form-width-full" rows="6" placeholder="例）SEO営業、広告営業、制作営業、営業代行はNG。既存顧客からの相談や見積依頼はOK。">{df_form_guard_prompt}</textarea>
         <input type="hidden" name="form[]" value="df_form_guard_prompt">
@@ -28,7 +28,7 @@
       </td>
     </tr>
     <tr>
-      <th>NG時の管理者宛メール</th>
+      <th>NG時の管理者宛メール<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="NG判定時に管理者宛メールだけを止めるか選びます。"></i></th>
       <td>
         <input type="hidden" name="df_form_guard_block_admin_mail_on_ng" value="disabled">
         <label class="acms-admin-form-checkbox">
@@ -40,7 +40,7 @@
       </td>
     </tr>
     <tr>
-      <th>ERROR時の動作</th>
+      <th>ERROR時の動作<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="AI失敗・タイムアウト時の管理者宛メール動作です。"></i></th>
       <td>
         <select name="df_form_guard_error_action" class="acms-admin-form-width-medium js-df-form-guard-error-action">
           <option value="send"{df_form_guard_error_action:selected#send}>送信する（おすすめ）</option>
@@ -51,14 +51,14 @@
       </td>
     </tr>
     <tr>
-      <th>判定対象の最大文字数</th>
+      <th>判定対象の最大文字数<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="AIへ渡すフォーム本文の最大文字数です。"></i></th>
       <td>
         <input type="number" name="df_form_guard_max_input_chars" value="{df_form_guard_max_input_chars}" min="500" max="20000" step="500" class="acms-admin-form-width-mini js-df-form-guard-max-input" placeholder="4000">
         <input type="hidden" name="form[]" value="df_form_guard_max_input_chars">
       </td>
     </tr>
     <tr id="js-arg_guidance_df_form_guard_reference_eids" class="js-arg_guidance">
-      <th>判断材料エントリー</th>
+      <th>判断材料エントリー<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="正規問い合わせをOK寄りに判断するための参考エントリーです。"></i></th>
       <td>
         <div class="df-form-guard-reference-control">
           <button type="button" name="eid" class="js-arg_reference_trigger acms-admin-btn acms-admin-btn-info acms-admin-inline-space" data-bid="%{BID}">ID参照</button>
@@ -73,14 +73,14 @@
       </td>
     </tr>
     <tr>
-      <th>判断材料の最大文字数</th>
+      <th>判断材料の最大文字数<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="判断材料エントリーからAIへ渡す最大文字数です。"></i></th>
       <td>
         <input type="number" name="df_form_guard_reference_max_chars" value="{df_form_guard_reference_max_chars}" min="500" max="20000" step="500" class="acms-admin-form-width-mini js-df-form-guard-reference-max" placeholder="3000">
         <input type="hidden" name="form[]" value="df_form_guard_reference_max_chars">
       </td>
     </tr>
     <tr>
-      <th>判定理由の保存</th>
+      <th>判定理由の保存<i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="AIの判定理由をフォーム履歴に保存します。"></i></th>
       <td>
         <input type="hidden" name="df_form_guard_store_reason" value="disabled">
         <label class="acms-admin-form-checkbox">
@@ -95,4 +95,4 @@
   </tbody>
 </table>
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.4"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.6"></script>

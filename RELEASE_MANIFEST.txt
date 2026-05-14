@@ -1,4 +1,4 @@
-# DF_FormGuard 0.1.4 release manifest
+# DF_FormGuard 0.1.6 release manifest
 # Plugin paths are relative to this repository root.
 
 AGENTS.md

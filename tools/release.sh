@@ -7,7 +7,7 @@ Usage:
   tools/release.sh VERSION
 
 Example:
-  tools/release.sh 0.1.4
+  tools/release.sh 0.1.6
 
 This script:
   - verifies the worktree is clean
@@ -37,7 +37,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Version must look like 0.1.4" >&2
+  echo "Version must look like 0.1.6" >&2
   exit 1
 fi
 
@@ -94,7 +94,7 @@ if [ ! -f RELEASE_MANIFEST.txt ]; then
   exit 1
 fi
 
-gh auth status >/dev/null
+gh auth status -h github.com >/dev/null
 bash tools/release-check.sh "$VERSION"
 
 rm -rf "$PACKAGE_DIR"

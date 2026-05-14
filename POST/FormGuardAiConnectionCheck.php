@@ -7,6 +7,8 @@ use Acms\Plugins\DF_FormGuard\Services\Classifier;
 use Acms\Plugins\DF_FormGuard\Services\DebugLogger;
 use Acms\Plugins\DF_FormGuard\Services\Settings;
 use Acms\Services\Facades\Common;
+use Acms\Services\Facades\Config;
+use Field;
 
 class FormGuardAiConnectionCheck extends ACMS_POST
 {
@@ -56,11 +58,14 @@ class FormGuardAiConnectionCheck extends ACMS_POST
                 ]);
             }
 
+            $lastCheckedAt = $this->saveLastCheckedAt();
+
             Common::responseJson([
                 'status' => 'success',
                 'message' => 'AI接続に成功しました。',
                 'apiKeySource' => $settings->apiKeySource(),
                 'model' => $settings->model(),
+                'last_checked_at' => $lastCheckedAt,
                 'decision' => [
                     'result' => $decision->result(),
                     'category' => $decision->category(),
@@ -85,5 +90,14 @@ class FormGuardAiConnectionCheck extends ACMS_POST
             return function_exists('roleAuthorization') && roleAuthorization('config_edit', BID);
         }
         return false;
+    }
+
+    private function saveLastCheckedAt(): string
+    {
+        $timestamp = date('Y-m-d H:i');
+        $field = new Field();
+        $field->set('df_form_guard_ai_last_checked_at', $timestamp);
+        Config::saveConfig($field, BID);
+        return $timestamp;
     }
 }

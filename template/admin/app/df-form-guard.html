@@ -9,7 +9,13 @@
   </div>
 </header>
 
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.4">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.6">
+
+<style>
+.js-df-form-guard-admin .df-form-guard-admin-table-wrap {
+  margin-top: 14px;
+}
+</style>
 
 <!-- BEGIN_MODULE Admin_Config -->
 <!-- BEGIN_IF [{notice_mess}/nem/] -->
@@ -28,7 +34,7 @@
 </div>
 <!-- END msg#error -->
 
-<div role="alert" class="acms-admin-alert acms-admin-alert-info acms-admin-alert-icon df-form-guard-update-notice js-df-form-guard-update-notice" data-current-version="0.1.4" hidden>
+<div role="alert" class="acms-admin-alert acms-admin-alert-info acms-admin-alert-icon df-form-guard-update-notice js-df-form-guard-update-notice" data-current-version="0.1.6" hidden>
   <span class="acms-admin-icon acms-admin-icon-news acms-admin-alert-icon-before" aria-hidden="true"></span>
   <button type="button" class="js-acms-alert-close acms-admin-alert-icon-after js-df-form-guard-update-close" aria-label="更新通知を閉じる">×</button>
   <span class="js-df-form-guard-update-message"></span>
@@ -44,33 +50,43 @@
 
   <p class="acms-admin-text-muted">AIで不要な問い合わせを判定し、NG時だけ管理者宛メールを止めます。フォーム履歴と自動返信は通常どおり残します。</p>
 
-  <h2 class="acms-admin-admin-title2"><!--T-->OpenAI接続設定<!--/T--></h2>
-  <p class="acms-admin-text-muted">基本の判定方針はプラグイン側で固定しています。フォームごとの補足ルールは、フォームID編集画面の「FormGuard」セクションで追加できます。</p>
+  <h2 class="acms-admin-admin-title2"><!--T-->DFフォームガードの使い方<!--/T--></h2>
+  <div class="df-form-guard-admin-guide">
+    <ol class="df-form-guard-admin-guide__steps">
+      <li><strong>各フォームのフォームID編集画面で「このフォームでAI迷惑メール・営業メール判定を行う」にチェックを入れると、フォームごとの詳細設定が表示されます。</strong></li>
+      <li>追加判定ルール、ERROR時の動作、判断材料エントリー、判定理由保存はフォームごとに設定できます。</li>
+    </ol>
+    <p class="acms-admin-text-muted">基本の判定方針はプラグイン側で固定され、フォームごとの設定は基本方針への補足として扱われます。</p>
+  </div>
 
-  <table class="adminTable acms-admin-table-admin-edit">
+  <h2 class="acms-admin-admin-title2"><!--T-->OpenAI接続設定<!--/T--></h2>
+  <p class="acms-admin-text-muted">OpenAI APIキー、モデル、AIタイムアウトをDFフォームガード全体の共通設定として保存します。</p>
+
+  <div class="df-form-guard-admin-table-wrap">
+  <table class="adminTable acms-admin-table-admin-edit df-form-guard-admin-table">
     <tr>
-      <th><!--T-->OpenAI APIキー<!--/T--></th>
+      <th><!--T-->OpenAI APIキー<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->OpenAI APIへの接続に使うキーです。保存後は再表示しません。<!--/T-->"></i></th>
       <td>
         <input type="password" name="df_form_guard_openai_api_key" value="" class="acms-admin-form-width-large js-df-form-guard-api-key" autocomplete="off" placeholder="変更するときだけ入力">
         <p class="acms-admin-text-muted">空欄保存では保存済みのキーを維持します。未設定の場合は <code>DF_FORM_GUARD_OPENAI_API_KEY</code> または <code>OPENAI_API_KEY</code> を使用します。</p>
       </td>
     </tr>
     <tr>
-      <th><!--T-->OpenAIモデル<!--/T--></th>
+      <th><!--T-->OpenAIモデル<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->フォーム内容のAI判定に使うモデル名です。<!--/T-->"></i></th>
       <td>
         <input type="text" name="df_form_guard_openai_model" value="{df_form_guard_openai_model}" class="acms-admin-form-width-medium" placeholder="gpt-4o-mini">
         <input type="hidden" name="config[]" value="df_form_guard_openai_model">
       </td>
     </tr>
     <tr>
-      <th><!--T-->AIタイムアウト<!--/T--></th>
+      <th><!--T-->AIタイムアウト<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->AI判定の応答待ち時間です。超過した場合はERRORとして扱います。<!--/T-->"></i></th>
       <td>
         <input type="number" name="df_form_guard_ai_timeout_seconds" value="{df_form_guard_ai_timeout_seconds}" min="1" max="60" step="1" class="acms-admin-form-width-mini" placeholder="10">
         <input type="hidden" name="config[]" value="df_form_guard_ai_timeout_seconds">
       </td>
     </tr>
     <tr>
-      <th><!--T-->debugモード<!--/T--></th>
+      <th><!--T-->debugモード<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->判定概要をログに出します。本文全文やAPIキーは出力しません。<!--/T-->"></i></th>
       <td>
         <input type="hidden" name="df_form_guard_debug" value="{df_form_guard_debug}" class="js-df-form-guard-debug-value">
         <label class="acms-admin-form-checkbox">
@@ -83,24 +99,28 @@
       </td>
     </tr>
   </table>
+  </div>
 
   <h2 class="acms-admin-admin-title2"><!--T-->AI接続チェック<!--/T--></h2>
-  <table class="adminTable acms-admin-table-admin-edit">
+  <div class="df-form-guard-admin-table-wrap">
+  <table class="adminTable acms-admin-table-admin-edit df-form-guard-admin-table">
     <tr>
-      <th><!--T-->テスト内容<!--/T--></th>
+      <th><!--T-->接続確認<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->保存済み設定でOpenAI APIに接続できるか確認します。<!--/T-->"></i></th>
       <td>
-        <textarea class="acms-admin-form-width-full js-df-form-guard-test-text" rows="5" placeholder="テスト判定したいフォーム内容を入力"></textarea>
-      </td>
-    </tr>
-    <tr>
-      <th><!--T-->接続確認<!--/T--></th>
-      <td>
-        <button type="button" class="acms-admin-btn-admin js-df-form-guard-ai-check"><!--T-->AI接続を確認<!--/T--></button>
+        <div class="acms-admin-flex acms-admin-items-center" style="gap: 12px; flex-wrap: wrap;">
+          <button type="button" class="acms-admin-btn-admin js-df-form-guard-ai-check"><!--T-->AI接続を確認<!--/T--></button>
+          <!-- BEGIN_IF [{df_form_guard_ai_last_checked_at}/nem/] -->
+          <span class="js-df-form-guard-ai-check-last acms-admin-text-muted"><!--T-->最終確認<!--/T-->: {df_form_guard_ai_last_checked_at}</span>
+          <!-- ELSE -->
+          <span class="js-df-form-guard-ai-check-last acms-admin-text-muted"><!--T-->未確認<!--/T--></span>
+          <!-- END_IF -->
+        </div>
         <p class="js-df-form-guard-ai-check-result acms-admin-text-muted" role="status" aria-live="polite"></p>
-        <p class="acms-admin-text-muted">保存済みのAPIキー、互換定数、環境変数の順で確認します。結果には利用モデル、APIキー取得元、サンプル判定を表示します。</p>
+        <p class="acms-admin-text-muted">保存済みのAPIキー、互換定数、環境変数の順で確認します。結果には利用モデル、APIキー取得元、接続確認用のサンプル判定を表示します。</p>
       </td>
     </tr>
   </table>
+  </div>
 
   <section class="df-form-guard-consultation">
     <h2 class="acms-admin-admin-title2"><!--T-->a-blog cms 拡張アプリ開発のご相談<!--/T--></h2>
@@ -115,9 +135,13 @@
       <a href="https://www.jicoo.com/event_types/9KVr0WMdvpEl" target="_blank" rel="noopener" class="acms-admin-btn-admin"><!--T-->オンラインミーティングで相談する<!--/T--></a>
       <a href="https://datafarm.jp/contact" target="_blank" rel="noopener" class="acms-admin-btn-admin"><!--T-->お問い合わせフォームから相談する<!--/T--></a>
     </div>
+    <div class="df-form-guard-admin-support">
+      <p class="df-form-guard-admin-support__title"><!--T-->DFフォームガードが役に立った場合は、開発継続の応援も歓迎しています。<!--/T--></p>
+      <a href="https://buy.stripe.com/4gM3cu8ZGggTdyL70O9ws04" target="_blank" rel="noopener" class="acms-admin-btn-admin"><!--T-->開発を応援する（500円）<!--/T--></a>
+    </div>
   </section>
 </form>
 <!-- END_MODULE Admin_Config -->
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.4"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.6"></script>
 <!-- END_IF -->
