@@ -1,6 +1,16 @@
 (function() {
   'use strict';
 
+  var RELEASE_API_URL = 'https://api.github.com/repos/datafarmjp/acms-df-form-guard/releases/latest';
+  var RELEASE_LATEST_URL = 'https://github.com/datafarmjp/acms-df-form-guard/releases/latest';
+  var RELEASE_CACHE_KEY = 'df_form_guard_latest_release';
+  var UPDATE_DISMISSED_KEY = 'df_form_guard_update_dismissed';
+  var UPDATE_DOT_LABEL = '新しいバージョンがあります';
+  var SIDEBAR_SELECTOR = '.acms-admin-sidebar-main';
+  var MENU_LINK_SELECTOR = 'a[href*="admin/app_df-form-guard"]';
+  var MENU_DOT_SELECTOR = '.df-form-guard-admin-menu-update-dot';
+  var latestReleasePromise = null;
+
   document.addEventListener('DOMContentLoaded', function() {
     var root = document.querySelector('.js-df-form-guard-admin');
     var apiKey = document.querySelector('.js-df-form-guard-api-key');
@@ -20,6 +30,8 @@
     setupDebug(debugToggle, debugValue);
     setupConnectionCheck(checkButton, checkResult, checkLast);
     setupUpdateNotice();
+    cleanupMenuUpdateDots();
+    setupMenuUpdateDot();
   });
 
   function setupApiKeyConfig(apiKey) {
@@ -236,7 +248,7 @@
         var tag = notice.getAttribute('data-release-tag') || '';
         if (tag && window.localStorage) {
           try {
-            window.localStorage.setItem('df_form_guard_update_dismissed', tag);
+            window.localStorage.setItem(UPDATE_DISMISSED_KEY, tag);
           } catch (error) {
           }
         }
@@ -247,14 +259,14 @@
       var url;
       var changelogUrl;
       var asset;
-      if (!release || !release.tag_name || release.prerelease || release.draft) {
+      if (!isUsableRelease(release)) {
         return;
       }
       latestVersion = normalizeVersion(release.tag_name);
       if (!isNewerVersion(latestVersion, currentVersion) || isDismissed(release.tag_name)) {
         return;
       }
-      url = release.html_url || 'https://github.com/datafarmjp/acms-df-form-guard/releases/latest';
+      url = release.html_url || RELEASE_LATEST_URL;
       changelogUrl = changelogUrlForTag(release.tag_name);
       asset = zipAsset(release.assets || [], latestVersion);
       if (asset && asset.browser_download_url) {
@@ -280,27 +292,79 @@
         message.appendChild(changelogLink);
       }
       notice.hidden = false;
-    }).catch(function(error) {
-      warnDebug('DF_FormGuard release check failed:', error);
+    }).catch(function() {
+    });
+  }
+
+  function setupMenuUpdateDot() {
+    var notice = document.querySelector('.js-df-form-guard-update-notice');
+    var currentVersion = notice ? notice.getAttribute('data-current-version') || '' : '';
+    if (!currentVersion || !window.fetch) {
+      return;
+    }
+    latestRelease().then(function(release) {
+      if (!isUsableRelease(release)) {
+        return;
+      }
+      if (!isNewerVersion(normalizeVersion(release.tag_name), currentVersion)) {
+        return;
+      }
+      addMenuUpdateDot();
+    }).catch(function() {
+    });
+  }
+
+  function addMenuUpdateDot() {
+    var sidebar = document.querySelector(SIDEBAR_SELECTOR);
+    var link;
+    var dot;
+    if (!sidebar) {
+      return;
+    }
+    link = sidebar.querySelector(MENU_LINK_SELECTOR);
+    if (!link || link.querySelector(MENU_DOT_SELECTOR)) {
+      return;
+    }
+    dot = document.createElement('span');
+    dot.className = MENU_DOT_SELECTOR.slice(1);
+    dot.setAttribute('role', 'img');
+    dot.setAttribute('aria-label', UPDATE_DOT_LABEL);
+    dot.title = UPDATE_DOT_LABEL;
+    link.appendChild(dot);
+  }
+
+  function cleanupMenuUpdateDots() {
+    var sidebar = document.querySelector(SIDEBAR_SELECTOR);
+    var selector = [
+      MENU_DOT_SELECTOR,
+      '[title="' + UPDATE_DOT_LABEL + '"]',
+      '[aria-label="' + UPDATE_DOT_LABEL + '"]'
+    ].join(',');
+    document.querySelectorAll(selector).forEach(function(dot) {
+      if (sidebar && sidebar.contains(dot)) {
+        return;
+      }
+      if (dot.parentNode) {
+        dot.parentNode.removeChild(dot);
+      }
     });
   }
 
   function latestRelease() {
-    var cacheKey = 'df_form_guard_latest_release';
     var cachedRelease = null;
+    if (latestReleasePromise) {
+      return latestReleasePromise;
+    }
     if (window.localStorage) {
       try {
-        var cached = JSON.parse(window.localStorage.getItem(cacheKey) || 'null');
-        if (cached && cached.release && cached.checked_at && Date.now() - cached.checked_at < 21600000) {
+        var cached = JSON.parse(window.localStorage.getItem(RELEASE_CACHE_KEY) || 'null');
+        if (cached && cached.release) {
           cachedRelease = cached.release;
         }
       } catch (error) {
       }
     }
-    if (cachedRelease) {
-      return Promise.resolve(cachedRelease);
-    }
-    return fetch('https://api.github.com/repos/datafarmjp/acms-df-form-guard/releases/latest', {
+    latestReleasePromise = fetch(RELEASE_API_URL, {
       headers: {'Accept': 'application/vnd.github+json'}
     }).then(function(response) {
       if (!response.ok) {
@@ -310,15 +374,21 @@
     }).then(function(release) {
       if (window.localStorage) {
         try {
-          window.localStorage.setItem(cacheKey, JSON.stringify({
+          window.localStorage.setItem(RELEASE_CACHE_KEY, JSON.stringify({
             checked_at: Date.now(),
-            release: release,
+            release: release
           }));
         } catch (error) {
         }
       }
       return release;
+    }).catch(function(error) {
+      if (cachedRelease) {
+        return cachedRelease;
+      }
+      throw error;
     });
+    return latestReleasePromise;
   }
 
   function changelogUrlForTag(tag) {
@@ -344,12 +414,16 @@
     return null;
   }
 
+  function isUsableRelease(release) {
+    return !!(release && release.tag_name && !release.prerelease && !release.draft);
+  }
+
   function isDismissed(tag) {
     if (!window.localStorage) {
       return false;
     }
     try {
-      return window.localStorage.getItem('df_form_guard_update_dismissed') === tag;
+      return window.localStorage.getItem(UPDATE_DISMISSED_KEY) === tag;
     } catch (error) {
       return false;
     }

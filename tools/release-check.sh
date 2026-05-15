@@ -5,8 +5,9 @@ set -u
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MANIFEST="$PLUGIN_DIR/RELEASE_MANIFEST.txt"
 ADMIN_TEMPLATE="$PLUGIN_DIR/template/admin/app/df-form-guard.html"
+TOPICPATH_TEMPLATE="$PLUGIN_DIR/template/admin/topicpath/df-form-guard.html"
 FORM_TEMPLATE="$PLUGIN_DIR/template/form-guard-field.html"
-VERSION="${1:-0.1.6}"
+VERSION="${1:-0.1.7}"
 FAILURES=0
 
 case "$PLUGIN_DIR" in
@@ -201,11 +202,16 @@ check_shared_guidelines() {
 }
 
 check_admin_template() {
-  contains "$PLUGIN_DIR/ServiceProvider.php" "use Acms\\Services\\Common\\InjectTemplate;" &&
+    contains "$PLUGIN_DIR/ServiceProvider.php" "use Acms\\Services\\Common\\InjectTemplate;" &&
     contains "$PLUGIN_DIR/ServiceProvider.php" "'admin-main'" &&
+    contains "$PLUGIN_DIR/ServiceProvider.php" "'admin-topicpath'" &&
     contains "$PLUGIN_DIR/ServiceProvider.php" "archiveLegacyAdminTemplate" &&
     contains "$ADMIN_TEMPLATE" "<!-- BEGIN_IF [%{ADMIN}/eq/app_df-form-guard] -->" &&
+    contains "$TOPICPATH_TEMPLATE" "<!-- BEGIN app_df-form-guard -->" &&
     contains "$ADMIN_TEMPLATE" "js-df-form-guard-update-notice" &&
+    contains "$PLUGIN_DIR/assets/df-form-guard-admin.js" "df_form_guard_latest_release" &&
+    contains "$PLUGIN_DIR/assets/df-form-guard-admin.js" "df-form-guard-admin-menu-update-dot" &&
+    contains "$PLUGIN_DIR/assets/df-form-guard-admin.css" ".df-form-guard-admin-menu-update-dot" &&
     contains "$ADMIN_TEMPLATE" "https://www.jicoo.com/event_types/9KVr0WMdvpEl" &&
     contains "$ADMIN_TEMPLATE" "https://datafarm.jp/contact" &&
     contains "$ADMIN_TEMPLATE" "https://buy.stripe.com/4gM3cu8ZGggTdyL70O9ws04" &&

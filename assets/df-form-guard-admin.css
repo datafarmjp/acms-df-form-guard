@@ -12,6 +12,16 @@
   margin-top: 14px;
 }
 
+.df-form-guard-admin-menu-update-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: #1d6fe8;
+  vertical-align: middle;
+}
+
 .df-form-guard-update-notice[hidden] {
   display: none !important;
 }

@@ -16,7 +16,7 @@ class ServiceProvider extends ACMS_App
     /**
      * @var string
      */
-    public $version = '0.1.6';
+    public $version = '0.1.7';
 
     /**
      * @var string
@@ -124,6 +124,10 @@ class ServiceProvider extends ACMS_App
         InjectTemplate::singleton()->add(
             'admin-main',
             PLUGIN_DIR . 'DF_FormGuard/template/admin/app/df-form-guard.html'
+        );
+        InjectTemplate::singleton()->add(
+            'admin-topicpath',
+            PLUGIN_DIR . 'DF_FormGuard/template/admin/topicpath/df-form-guard.html'
         );
     }
 
