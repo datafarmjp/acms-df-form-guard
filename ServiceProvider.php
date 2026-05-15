@@ -16,7 +16,7 @@ class ServiceProvider extends ACMS_App
     /**
      * @var string
      */
-    public $version = '0.1.7';
+    public $version = '0.1.8';
 
     /**
      * @var string
@@ -115,6 +115,11 @@ class ServiceProvider extends ACMS_App
      */
     private function injectAdminTemplate()
     {
+        InjectTemplate::singleton()->add(
+            'admin-main',
+            PLUGIN_DIR . 'DF_FormGuard/template/admin/form-log.html'
+        );
+
         $themesDir = defined('THEMES_DIR') ? THEMES_DIR : 'themes/';
         $legacyTemplate = SCRIPT_DIR . ltrim($themesDir, '/') . 'system/admin/app/df-form-guard.html';
         if (is_file($legacyTemplate) && !$this->archiveLegacyAdminTemplate($legacyTemplate)) {
@@ -162,6 +167,7 @@ class ServiceProvider extends ACMS_App
             'FormGuardSettings.php',
             'FormGuardFormSettings.php',
             'FormGuardAiConnectionCheck.php',
+            'FormGuardLogDecisions.php',
         ];
         $sourceDir = PLUGIN_LIB_DIR . 'DF_FormGuard/template/post/';
         $destDir = SCRIPT_DIR . 'extension/acms/POST/';

@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+.df-form-guard-log-cell {
+  min-width: 180px;
+}
+
+.df-form-guard-log-badge {
+  display: inline-block;
+  min-width: 48px;
+  padding: 2px 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: center;
+  border-radius: 3px;
+}
+
+.df-form-guard-log-badge--ok {
+  background: #3d8b40;
+}
+
+.df-form-guard-log-badge--ng {
+  background: #c74242;
+}
+
+.df-form-guard-log-badge--error {
+  background: #c27a1a;
+}
+
+.df-form-guard-log-badge--empty {
+  color: #555;
+  background: #d8dde3;
+}
+
+.df-form-guard-log-meta {
+  margin-top: 4px;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.df-form-guard-log-reason {
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.df-form-guard-log-reason summary {
+  cursor: pointer;
+}
+
+.df-form-guard-log-reason__body {
+  margin-top: 4px;
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  background: #f6f8fa;
+  border: 1px solid #d8dde3;
+  border-radius: 3px;
+}

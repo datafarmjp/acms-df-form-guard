@@ -7,7 +7,7 @@ MANIFEST="$PLUGIN_DIR/RELEASE_MANIFEST.txt"
 ADMIN_TEMPLATE="$PLUGIN_DIR/template/admin/app/df-form-guard.html"
 TOPICPATH_TEMPLATE="$PLUGIN_DIR/template/admin/topicpath/df-form-guard.html"
 FORM_TEMPLATE="$PLUGIN_DIR/template/form-guard-field.html"
-VERSION="${1:-0.1.7}"
+VERSION="${1:-0.1.8}"
 FAILURES=0
 
 case "$PLUGIN_DIR" in
@@ -86,7 +86,7 @@ check_php_files() {
 
   if [ -n "$PROJECT_ROOT" ]; then
     find "$PROJECT_ROOT/extension/acms/POST" -maxdepth 1 \
-      \( -name 'FormGuardSettings.php' -o -name 'FormGuardFormSettings.php' -o -name 'FormGuardAiConnectionCheck.php' \) \
+      \( -name 'FormGuardSettings.php' -o -name 'FormGuardFormSettings.php' -o -name 'FormGuardAiConnectionCheck.php' -o -name 'FormGuardLogDecisions.php' \) \
       -print0 |
       xargs -0 -n 1 "$php" -l >>/tmp/df_form_guard_release_check.out 2>&1 || return 1
   fi
@@ -98,7 +98,8 @@ check_js_files() {
     return 0
   fi
   node --check "$PLUGIN_DIR/assets/df-form-guard-admin.js" >/tmp/df_form_guard_release_check.out 2>&1 &&
-    node --check "$PLUGIN_DIR/assets/df-form-guard-form.js" >>/tmp/df_form_guard_release_check.out 2>&1
+    node --check "$PLUGIN_DIR/assets/df-form-guard-form.js" >>/tmp/df_form_guard_release_check.out 2>&1 &&
+    node --check "$PLUGIN_DIR/assets/df-form-guard-form-log.js" >>/tmp/df_form_guard_release_check.out 2>&1
 }
 
 check_no_unwanted_files() {
@@ -205,9 +206,14 @@ check_admin_template() {
     contains "$PLUGIN_DIR/ServiceProvider.php" "use Acms\\Services\\Common\\InjectTemplate;" &&
     contains "$PLUGIN_DIR/ServiceProvider.php" "'admin-main'" &&
     contains "$PLUGIN_DIR/ServiceProvider.php" "'admin-topicpath'" &&
+    contains "$PLUGIN_DIR/ServiceProvider.php" "template/admin/form-log.html" &&
     contains "$PLUGIN_DIR/ServiceProvider.php" "archiveLegacyAdminTemplate" &&
     contains "$ADMIN_TEMPLATE" "<!-- BEGIN_IF [%{ADMIN}/eq/app_df-form-guard] -->" &&
     contains "$TOPICPATH_TEMPLATE" "<!-- BEGIN app_df-form-guard -->" &&
+    contains "$PLUGIN_DIR/template/admin/form-log.html" "<!-- BEGIN_IF [%{ADMIN}/eq/form_log] -->" &&
+    contains "$PLUGIN_DIR/template/admin/form-log.html" "df-form-guard-form-log.js?v=$VERSION" &&
+    contains "$PLUGIN_DIR/POST/FormGuardLogDecisions.php" "log_form_data" &&
+    contains "$PLUGIN_DIR/template/post/FormGuardLogDecisions.php" "FormGuardLogDecisions" &&
     contains "$ADMIN_TEMPLATE" "js-df-form-guard-update-notice" &&
     contains "$PLUGIN_DIR/assets/df-form-guard-admin.js" "df_form_guard_latest_release" &&
     contains "$PLUGIN_DIR/assets/df-form-guard-admin.js" "df-form-guard-admin-menu-update-dot" &&

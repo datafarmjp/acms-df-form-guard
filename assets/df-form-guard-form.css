@@ -6,6 +6,32 @@
   margin-top: 6px;
 }
 
+.df-form-guard-log-warning {
+  margin: 10px 0 0;
+}
+
+.df-form-guard-log-warning p {
+  margin: 0 0 4px;
+  font-weight: normal;
+}
+
+.df-form-guard-log-warning p:last-child {
+  margin-bottom: 0;
+}
+
+.df-form-guard-log-warning p.df-form-guard-log-warning-primary {
+  font-weight: bold;
+}
+
+.df-form-guard-log-warning-lead {
+  color: #c76a00;
+  font-weight: bold;
+}
+
+.df-form-guard-log-warning code {
+  font-weight: normal;
+}
+
 .df-form-guard-reference-control {
   display: flex;
   flex-wrap: wrap;

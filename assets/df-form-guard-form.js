@@ -12,6 +12,8 @@
     var errorAction = root.querySelector('.js-df-form-guard-error-action');
     var maxInput = root.querySelector('.js-df-form-guard-max-input');
     var referenceMax = root.querySelector('.js-df-form-guard-reference-max');
+    var logDisabled = document.querySelector('#input-checkbox-log');
+    var logWarning = root.querySelector('.js-df-form-guard-log-warning');
 
     root.querySelectorAll('.js-df-form-guard-default-on').forEach(function(input) {
       var current = String(input.getAttribute('data-current') || '').trim().toLowerCase();
@@ -29,11 +31,18 @@
     setNumberDefault(referenceMax, 500, 20000, 3000);
     setupReferenceEntries(root);
     syncDetail(enabled, detail);
+    syncLogWarning(enabled, logDisabled, logWarning);
     restoreFormSettings(root, enabled, detail);
 
     if (enabled) {
       enabled.addEventListener('change', function() {
         syncDetail(enabled, detail);
+        syncLogWarning(enabled, logDisabled, logWarning);
+      });
+    }
+    if (logDisabled) {
+      logDisabled.addEventListener('change', function() {
+        syncLogWarning(enabled, logDisabled, logWarning);
       });
     }
   });
@@ -43,6 +52,13 @@
       return;
     }
     detail.style.display = enabled.checked ? '' : 'none';
+  }
+
+  function syncLogWarning(enabled, logDisabled, warning) {
+    if (!enabled || !logDisabled || !warning) {
+      return;
+    }
+    warning.hidden = !(enabled.checked && logDisabled.checked);
   }
 
   function setNumberDefault(input, min, max, fallback) {
@@ -131,6 +147,7 @@
         }
         applySettings(root, json.settings);
         syncDetail(enabled, detail);
+        syncLogWarning(enabled, document.querySelector('#input-checkbox-log'), root.querySelector('.js-df-form-guard-log-warning'));
       })
       .catch(function(error) {
         warnDebug('DF_FormGuard form settings restore failed:', error);

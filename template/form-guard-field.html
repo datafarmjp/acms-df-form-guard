@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.7">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.css?v=0.1.8">
 
 <h3 class="acms-admin-admin-title2">FormGuard</h3>
 <div class="js-arg_reference_remove js-arg_reference_dummy acms-admin-label-group acms-admin-inline-space" data-arg="" style="display:none;">
@@ -16,6 +16,10 @@
         このフォームでAI迷惑メール・営業メール判定を行う
       </label>
       <input type="hidden" name="form[]" value="df_form_guard_enabled">
+      <div class="acms-admin-alert acms-admin-alert-warning df-form-guard-log-warning js-df-form-guard-log-warning" role="alert" hidden>
+        <p class="df-form-guard-log-warning-primary"><span class="df-form-guard-log-warning-lead">おすすめ設定:</span> 判定履歴を確認したい場合は、基本設定の「ログを残さないようにする」のチェックを外してください。</p>
+        <p>チェックしたままでもAI判定とメール抑制は動作しますが、フォーム履歴に <code>OK / NG / ERROR</code> の判定結果は残りません。</p>
+      </div>
     </td>
   </tr>
   <tbody class="js-df-form-guard-detail">
@@ -95,4 +99,4 @@
   </tbody>
 </table>
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.7"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-form.js?v=0.1.8"></script>
