@@ -1,4 +1,4 @@
-# DF_FormGuard 0.1.8 release manifest
+# DF_FormGuard 0.1.9 release manifest
 # Plugin paths are relative to this repository root.
 
 AGENTS.md
@@ -30,6 +30,8 @@ template/admin/app/df-form-guard.html
 template/admin/form-log.html
 template/admin/topicpath/df-form-guard.html
 template/form-guard-field.html
+template/get/DFFormGuardHoneypot.php
+template/include/honeypot.html
 template/post/FormGuardAiConnectionCheck.php
 template/post/FormGuardFormSettings.php
 template/post/FormGuardLogDecisions.php
@@ -45,3 +47,4 @@ tools/release.sh
 @project extension/acms/POST/FormGuardFormSettings.php
 @project extension/acms/POST/FormGuardLogDecisions.php
 @project extension/acms/POST/FormGuardSettings.php
+@project extension/acms/GET/DFFormGuardHoneypot.php

@@ -7,7 +7,7 @@ Usage:
   tools/release.sh VERSION
 
 Example:
-  tools/release.sh 0.1.8
+  tools/release.sh 0.1.9
 
 This script:
   - verifies the worktree is clean
@@ -37,7 +37,7 @@ if [ -z "$VERSION" ]; then
 fi
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Version must look like 0.1.8" >&2
+  echo "Version must look like 0.1.9" >&2
   exit 1
 fi
 

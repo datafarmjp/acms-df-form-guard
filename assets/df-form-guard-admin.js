@@ -17,6 +17,10 @@
     var timeout = document.querySelector('[name="df_form_guard_ai_timeout_seconds"]');
     var debugToggle = document.querySelector('.js-df-form-guard-debug-toggle');
     var debugValue = document.querySelector('.js-df-form-guard-debug-value');
+    var honeypotToggle = document.querySelector('.js-df-form-guard-honeypot-toggle');
+    var honeypotValue = document.querySelector('.js-df-form-guard-honeypot-value');
+    var honeypotRaw = document.querySelector('.js-df-form-guard-honeypot-raw');
+    var honeypotEffective = document.querySelector('.js-df-form-guard-honeypot-effective');
     var checkButton = document.querySelector('.js-df-form-guard-ai-check');
     var checkResult = document.querySelector('.js-df-form-guard-ai-check-result');
     var checkLast = document.querySelector('.js-df-form-guard-ai-check-last');
@@ -27,8 +31,11 @@
 
     setNumberDefault(timeout, 1, 60, 10);
     setupApiKeyConfig(apiKey);
-    setupDebug(debugToggle, debugValue);
+    setupFeatureToggle(debugToggle, debugValue, false);
+    setupFeatureToggle(honeypotToggle, honeypotValue, true);
+    setupHoneypotStatus(honeypotToggle, honeypotValue, honeypotRaw, honeypotEffective);
     setupConnectionCheck(checkButton, checkResult, checkLast);
+    setupCopyButtons();
     setupUpdateNotice();
     cleanupMenuUpdateDots();
     setupMenuUpdateDot();
@@ -52,15 +59,31 @@
     });
   }
 
-  function setupDebug(toggle, hidden) {
+  function setupFeatureToggle(toggle, hidden, fallback) {
     if (!toggle || !hidden) {
       return;
     }
-    toggle.checked = isEnabled(toggle.getAttribute('data-config-value'));
+    toggle.checked = isEnabled(toggle.getAttribute('data-config-value'), fallback);
     syncFeature(toggle, hidden);
     toggle.addEventListener('change', function() {
       syncFeature(toggle, hidden);
     });
+  }
+
+  function setupHoneypotStatus(toggle, hidden, raw, effective) {
+    if (!toggle || !hidden || !raw || !effective) {
+      return;
+    }
+    renderHoneypotStatus();
+    toggle.addEventListener('change', renderHoneypotStatus);
+
+    function renderHoneypotStatus() {
+      var savedValue = String(toggle.getAttribute('data-config-value') || '').trim();
+      var value = String(hidden.value || '').trim();
+      raw.textContent = savedValue === '' ? '(空)' : savedValue;
+      effective.textContent = isEnabled(value, true) ? 'ON' : 'OFF';
+      effective.className = 'js-df-form-guard-honeypot-effective ' + (isEnabled(value, true) ? 'acms-admin-text-success' : 'acms-admin-text-danger');
+    }
   }
 
   function setupConnectionCheck(button, result, lastChecked) {
@@ -202,9 +225,73 @@
     hidden.value = toggle.checked ? 'enabled' : 'disabled';
   }
 
-  function isEnabled(value) {
+  function isEnabled(value, fallback) {
     var normalized = String(value || '').trim().toLowerCase();
+    if (normalized === '') {
+      return !!fallback;
+    }
     return normalized === 'enabled' || normalized === 'on' || normalized === '1' || normalized === 'true';
+  }
+
+  function setupCopyButtons() {
+    var buttons = document.querySelectorAll('.js-df-form-guard-copy');
+    Array.prototype.forEach.call(buttons, function(button) {
+      var status = findCopyStatus(button);
+      button.addEventListener('click', function() {
+        copyText(button.getAttribute('data-copy-text') || '')
+          .then(function() {
+            renderLocalStatus(status, 'コピーしました', 'success');
+          })
+          .catch(function() {
+            renderLocalStatus(status, 'コピーできませんでした', 'danger');
+          });
+      });
+    });
+  }
+
+  function findCopyStatus(button) {
+    var parent = button.closest ? button.closest('td') : null;
+    return parent ? parent.querySelector('.js-df-form-guard-copy-status') : null;
+  }
+
+  function renderLocalStatus(status, message, type) {
+    if (!status) {
+      return;
+    }
+    status.className = statusClass(status, type);
+    status.textContent = message;
+  }
+
+  function statusClass(element, type) {
+    var base = element.getAttribute('data-base-class') || element.className.replace(/\s*acms-admin-text-(success|danger|muted)\b/g, '');
+    element.setAttribute('data-base-class', base);
+    return base + ' acms-admin-text-' + (type || 'muted');
+  }
+
+  function copyText(text) {
+    if (window.navigator && window.navigator.clipboard && window.navigator.clipboard.writeText) {
+      return window.navigator.clipboard.writeText(text);
+    }
+    return new Promise(function(resolve, reject) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', 'readonly');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-10000px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        if (document.execCommand('copy')) {
+          resolve();
+        } else {
+          reject(new Error('copy failed'));
+        }
+      } catch (error) {
+        reject(error);
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    });
   }
 
   function appendCsrfToken(formData) {

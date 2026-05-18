@@ -34,13 +34,24 @@ class Hook
             return;
         }
 
+        $settings = Settings::load();
+        $logger = new DebugLogger($settings->debugEnabled());
+        if ($settings->honeypotEnabled() && $this->isHoneypotTriggered($thisModule, $field)) {
+            $abort = true;
+            $thisModule->Post->set('step', 'forbidden');
+            $logger->info('form blocked before ai decision', [
+                'form_id' => (int)$info['id'],
+                'form_code' => $formCode,
+                'reason' => 'honeypot',
+            ]);
+            return;
+        }
+
         $formSettings = FormSettings::fromField($info['data']);
         if (!$formSettings->enabled()) {
             return;
         }
 
-        $settings = Settings::load();
-        $logger = new DebugLogger($settings->debugEnabled());
         $decision = null;
         $adminMailBlocked = false;
 
@@ -105,4 +116,42 @@ class Hook
         $field->set('df_form_guard_admin_mail_blocked', $adminMailBlocked ? 'yes' : 'no');
         $field->set('df_form_guard_checked_at', date('Y-m-d H:i:s', REQUEST_TIME));
     }
+
+    private function isHoneypotTriggered($thisModule, ?Field_Validation $field = null): bool
+    {
+        $values = [];
+        if ($field) {
+            $values = $field->getArray('df_form_guard_honeypot');
+            if (empty($values)) {
+                $value = (string)$field->get('df_form_guard_honeypot');
+                $values = $value === '' ? [] : [$value];
+            }
+        }
+        if (empty($values)) {
+            $postValues = method_exists($thisModule->Post, 'getArray')
+                ? $thisModule->Post->getArray('df_form_guard_honeypot')
+                : [];
+            if (empty($postValues)) {
+                $postValue = $thisModule->Post->get('df_form_guard_honeypot');
+                $postValues = is_array($postValue) ? $postValue : [$postValue];
+            }
+            $values = $postValues;
+        }
+        if (empty($values) && isset($_POST['df_form_guard_honeypot'])) {
+            $rawPostValue = $_POST['df_form_guard_honeypot'];
+            $values = is_array($rawPostValue) ? $rawPostValue : [$rawPostValue];
+        }
+        if (empty($values) && isset($_POST['df_form_guard_honeypot[]'])) {
+            $rawPostValue = $_POST['df_form_guard_honeypot[]'];
+            $values = is_array($rawPostValue) ? $rawPostValue : [$rawPostValue];
+        }
+
+        foreach ($values as $value) {
+            if (trim((string)$value) !== '') {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

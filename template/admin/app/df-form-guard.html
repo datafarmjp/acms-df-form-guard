@@ -9,7 +9,7 @@
   </div>
 </header>
 
-<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.8">
+<link rel="stylesheet" href="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.css?v=0.1.9">
 
 <style>
 .js-df-form-guard-admin .df-form-guard-admin-table-wrap {
@@ -34,7 +34,7 @@
 </div>
 <!-- END msg#error -->
 
-<div role="alert" class="acms-admin-alert acms-admin-alert-info acms-admin-alert-icon df-form-guard-update-notice js-df-form-guard-update-notice" data-current-version="0.1.8" hidden>
+<div role="alert" class="acms-admin-alert acms-admin-alert-info acms-admin-alert-icon df-form-guard-update-notice js-df-form-guard-update-notice" data-current-version="0.1.9" hidden>
   <span class="acms-admin-icon acms-admin-icon-news acms-admin-alert-icon-before" aria-hidden="true"></span>
   <button type="button" class="js-acms-alert-close acms-admin-alert-icon-after js-df-form-guard-update-close" aria-label="更新通知を閉じる">×</button>
   <span class="js-df-form-guard-update-message"></span>
@@ -98,12 +98,6 @@
         <p class="acms-admin-text-muted">フォームID、判定結果、カテゴリ、信頼度、管理者宛メール抑制有無、AI APIエラー概要を出力します。本文全文やAPIキーはログに出しません。</p>
       </td>
     </tr>
-  </table>
-  </div>
-
-  <h2 class="acms-admin-admin-title2"><!--T-->AI接続チェック<!--/T--></h2>
-  <div class="df-form-guard-admin-table-wrap">
-  <table class="adminTable acms-admin-table-admin-edit df-form-guard-admin-table">
     <tr>
       <th><!--T-->接続確認<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->保存済み設定でOpenAI APIに接続できるか確認します。<!--/T-->"></i></th>
       <td>
@@ -117,6 +111,37 @@
         </div>
         <p class="js-df-form-guard-ai-check-result acms-admin-text-muted" role="status" aria-live="polite"></p>
         <p class="acms-admin-text-muted">保存済みのAPIキー、互換定数、環境変数の順で確認します。結果には利用モデル、APIキー取得元、接続確認用のサンプル判定を表示します。</p>
+      </td>
+    </tr>
+  </table>
+  </div>
+
+  <h2 class="acms-admin-admin-title2"><!--T-->軽量bot対策<!--/T--></h2>
+  <div class="df-form-guard-admin-table-wrap">
+  <table class="adminTable acms-admin-table-admin-edit df-form-guard-admin-table">
+    <tr>
+      <th><!--T-->Honeypot<!--/T--><i class="acms-admin-icon-tooltip js-acms-tooltip-hover" data-acms-tooltip="<!--T-->AI判定前に自動入力された迷惑送信を止めます。<!--/T-->"></i></th>
+      <td>
+        <input type="hidden" name="df_form_guard_honeypot_enabled" value="{df_form_guard_honeypot_enabled}" class="js-df-form-guard-honeypot-value">
+        <label class="acms-admin-form-checkbox">
+          <input type="checkbox" value="enabled" class="js-df-form-guard-honeypot-toggle" data-config-value="{df_form_guard_honeypot_enabled}">
+          <i class="acms-admin-ico-checkbox"></i>
+          <!--T-->見えない確認項目で自動入力された迷惑送信を止める<!--/T-->
+        </label>
+        <input type="hidden" name="config[]" value="df_form_guard_honeypot_enabled">
+        <p class="acms-admin-text-muted">AI判定とは別の軽量bot対策です。送信対象の <code>&lt;form&gt;</code> 内にincludeを追加したフォームだけで動作し、設置していないフォームには影響しません。</p>
+        <p class="acms-admin-text-muted">
+          <!--T-->現在の設定<!--/T-->:
+          <!--T-->保存値<!--/T--> <code class="js-df-form-guard-honeypot-raw">-</code> /
+          <!--T-->実効値<!--/T--> <strong class="js-df-form-guard-honeypot-effective">-</strong>
+          <span class="acms-admin-text-muted">（<!--T-->空値は初期値としてON<!--/T-->）</span>
+        </p>
+        <p class="acms-admin-text-muted">以下のincludeを追加すると有効になります。</p>
+        <div class="df-form-guard-admin-code-row">
+          <pre class="df-form-guard-admin-code"><code>&#64;include(&quot;/extension/plugins/DF_FormGuard/template/include/honeypot.html&quot;)</code></pre>
+          <button type="button" class="acms-admin-btn-admin js-df-form-guard-copy" data-copy-text='&#64;include("/extension/plugins/DF_FormGuard/template/include/honeypot.html")'><!--T-->コピー<!--/T--></button>
+        </div>
+        <p class="df-form-guard-admin-local-status js-df-form-guard-copy-status" role="status" aria-live="polite"></p>
       </td>
     </tr>
   </table>
@@ -143,5 +168,5 @@
 </form>
 <!-- END_MODULE Admin_Config -->
 
-<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.8"></script>
+<script src="/extension/plugins/DF_FormGuard/assets/df-form-guard-admin.js?v=0.1.9"></script>
 <!-- END_IF -->

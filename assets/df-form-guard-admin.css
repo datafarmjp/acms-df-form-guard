@@ -52,6 +52,42 @@
   margin: 0 0 6px;
 }
 
+.df-form-guard-admin-code-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  max-width: 100%;
+  margin-top: 6px;
+}
+
+.df-form-guard-admin-code {
+  display: inline-block;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 6px 8px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border: 1px solid #d8dde3;
+  border-radius: 4px;
+}
+
+.df-form-guard-admin-code code {
+  white-space: nowrap;
+}
+
+.df-form-guard-admin-code-row .js-df-form-guard-copy {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.df-form-guard-admin-local-status {
+  min-height: 1.4em;
+  margin: 8px 0 0;
+}
+
 .df-form-guard-consultation {
   margin-top: 32px;
   padding: 20px;

@@ -31,6 +31,7 @@ class Settings
             'model' => self::openAiModel(),
             'timeout' => self::number('df_form_guard_ai_timeout_seconds', 1, 60, 10),
             'debug' => self::feature('df_form_guard_debug', false),
+            'honeypot' => self::feature('df_form_guard_honeypot_enabled', true),
         ]);
     }
 
@@ -46,6 +47,7 @@ class Settings
             'openAiModelSource' => $settings->modelSource(),
             'timeoutSeconds' => $settings->timeoutSeconds(),
             'debug' => $settings->debugEnabled(),
+            'honeypot' => $settings->honeypotEnabled(),
         ];
     }
 
@@ -81,6 +83,11 @@ class Settings
     public function debugEnabled(): bool
     {
         return (bool)$this->values['debug'];
+    }
+
+    public function honeypotEnabled(): bool
+    {
+        return (bool)$this->values['honeypot'];
     }
 
     /**

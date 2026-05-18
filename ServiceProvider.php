@@ -16,7 +16,12 @@ class ServiceProvider extends ACMS_App
     /**
      * @var string
      */
-    public $version = '0.1.8';
+    private $getWrapperMarker = 'DF_FormGuard managed GET wrapper';
+
+    /**
+     * @var string
+     */
+    public $version = '0.1.9';
 
     /**
      * @var string
@@ -31,7 +36,7 @@ class ServiceProvider extends ACMS_App
     /**
      * @var bool
      */
-    public $module = false;
+    public $module = true;
 
     /**
      * @var false|string
@@ -50,6 +55,7 @@ class ServiceProvider extends ACMS_App
     {
         $this->injectAdminTemplate();
         $this->syncPostWrappers();
+        $this->syncGetWrappers();
 
         HookFactory::singleton()->attach('DF_FormGuard', new Hook());
 
@@ -73,6 +79,7 @@ class ServiceProvider extends ACMS_App
     public function install()
     {
         $this->syncPostWrappers();
+        $this->syncGetWrappers();
     }
 
     /**
@@ -89,6 +96,7 @@ class ServiceProvider extends ACMS_App
     {
         $this->injectAdminTemplate();
         $this->syncPostWrappers();
+        $this->syncGetWrappers();
         return true;
     }
 
@@ -99,6 +107,7 @@ class ServiceProvider extends ACMS_App
     {
         $this->injectAdminTemplate();
         $this->syncPostWrappers();
+        $this->syncGetWrappers();
         return true;
     }
 
@@ -205,6 +214,55 @@ class ServiceProvider extends ACMS_App
     private function isManagedPostWrapper($content)
     {
         if (strpos($content, $this->postWrapperMarker) !== false) {
+            return true;
+        }
+        return strpos($content, 'Acms\\Plugins\\DF_FormGuard') !== false;
+    }
+
+    /**
+     * @return void
+     */
+    private function syncGetWrappers()
+    {
+        $files = [
+            'DFFormGuardHoneypot.php',
+        ];
+        $sourceDir = PLUGIN_LIB_DIR . 'DF_FormGuard/template/get/';
+        $destDir = SCRIPT_DIR . 'extension/acms/GET/';
+
+        if (!is_dir($destDir)) {
+            @mkdir($destDir, 0775, true);
+        }
+        if (!is_dir($destDir) || !is_writable($destDir)) {
+            return;
+        }
+
+        foreach ($files as $file) {
+            $source = $sourceDir . $file;
+            $dest = $destDir . $file;
+            if (!is_file($source)) {
+                continue;
+            }
+            if (is_file($dest)) {
+                if (!is_writable($dest)) {
+                    continue;
+                }
+                $content = (string)@file_get_contents($dest);
+                if (!$this->isManagedGetWrapper($content)) {
+                    continue;
+                }
+            }
+            @copy($source, $dest);
+        }
+    }
+
+    /**
+     * @param string $content
+     * @return bool
+     */
+    private function isManagedGetWrapper($content)
+    {
+        if (strpos($content, $this->getWrapperMarker) !== false) {
             return true;
         }
         return strpos($content, 'Acms\\Plugins\\DF_FormGuard') !== false;

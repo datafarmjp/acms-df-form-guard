@@ -7,7 +7,7 @@ MANIFEST="$PLUGIN_DIR/RELEASE_MANIFEST.txt"
 ADMIN_TEMPLATE="$PLUGIN_DIR/template/admin/app/df-form-guard.html"
 TOPICPATH_TEMPLATE="$PLUGIN_DIR/template/admin/topicpath/df-form-guard.html"
 FORM_TEMPLATE="$PLUGIN_DIR/template/form-guard-field.html"
-VERSION="${1:-0.1.8}"
+VERSION="${1:-0.1.9}"
 FAILURES=0
 
 case "$PLUGIN_DIR" in
@@ -53,6 +53,12 @@ contains() {
   grep -Fq "$pattern" "$file"
 }
 
+not_contains() {
+  local file="$1"
+  local pattern="$2"
+  ! grep -Fq "$pattern" "$file"
+}
+
 not_contains_regex() {
   local pattern="$1"
   shift
@@ -87,6 +93,10 @@ check_php_files() {
   if [ -n "$PROJECT_ROOT" ]; then
     find "$PROJECT_ROOT/extension/acms/POST" -maxdepth 1 \
       \( -name 'FormGuardSettings.php' -o -name 'FormGuardFormSettings.php' -o -name 'FormGuardAiConnectionCheck.php' -o -name 'FormGuardLogDecisions.php' \) \
+      -print0 |
+      xargs -0 -n 1 "$php" -l >>/tmp/df_form_guard_release_check.out 2>&1 || return 1
+    find "$PROJECT_ROOT/extension/acms/GET" -maxdepth 1 \
+      \( -name 'DFFormGuardHoneypot.php' \) \
       -print0 |
       xargs -0 -n 1 "$php" -l >>/tmp/df_form_guard_release_check.out 2>&1 || return 1
   fi
@@ -222,6 +232,23 @@ check_admin_template() {
     contains "$ADMIN_TEMPLATE" "https://datafarm.jp/contact" &&
     contains "$ADMIN_TEMPLATE" "https://buy.stripe.com/4gM3cu8ZGggTdyL70O9ws04" &&
     contains "$ADMIN_TEMPLATE" "rel=\"noopener\"" &&
+    contains "$ADMIN_TEMPLATE" "df_form_guard_honeypot_enabled" &&
+    contains "$ADMIN_TEMPLATE" "js-df-form-guard-honeypot-effective" &&
+    contains "$ADMIN_TEMPLATE" "設置していないフォームには影響しません" &&
+    contains "$ADMIN_TEMPLATE" "&#64;include(&quot;/extension/plugins/DF_FormGuard/template/include/honeypot.html&quot;)" &&
+    contains "$PLUGIN_DIR/template/include/honeypot.html" "BEGIN_MODULE DFFormGuardHoneypot" &&
+    contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "Settings::load()" &&
+    contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "DF_FormGuard Honeypot: enabled" &&
+    contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "name=\"df_form_guard_honeypot[]\"" &&
+    contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "name=\"field[]\" value=\"df_form_guard_honeypot\"" &&
+    contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "df_form_guard_honeypot:v#max" &&
+    not_contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "form not found" &&
+    not_contains "$PLUGIN_DIR/template/get/DFFormGuardHoneypot.php" "form disabled" &&
+    contains "$PLUGIN_DIR/ServiceProvider.php" "syncGetWrappers" &&
+    contains "$PLUGIN_DIR/README.md" "設置していないフォームには影響しません" &&
+    contains "$PLUGIN_DIR/README.md" "@include(\"/extension/plugins/DF_FormGuard/template/include/honeypot.html\")" &&
+    contains "$PLUGIN_DIR/Hook.php" "reason' => 'honeypot'" &&
+    contains "$PLUGIN_DIR/README.md" "Honeypot bot対策" &&
     not_contains_regex "syncAdminTemplate" \
       "$PLUGIN_DIR" \
       -g '!README.md' \
