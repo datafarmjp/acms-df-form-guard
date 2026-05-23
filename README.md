@@ -177,6 +177,18 @@ bash tools/release.sh 0.1.9
 bash tools/release-check.sh 0.1.9
 ```
 
+### リリース告知連携
+
+`DF_RELEASE_SYNC_ENABLED=1` でリリースJSONをSFTP配置したあと、`DF_RELEASE_PUBLISH_ENABLED=1` の場合だけDFリリースへ告知作成POSTを送ります。
+
+```sh
+export DF_RELEASE_PUBLISH_ENABLED=1
+export DF_RELEASE_PUBLISH_ENDPOINT="https://example.com/bid/1/"
+export DF_RELEASE_PUBLISH_TOKEN="DFリリース管理画面のAPIトークン"
+```
+
+`DF_RELEASE_PUBLISH_ENABLED` が未設定の場合、既存のリリース処理は変わりません。
+
 ## サポートとカスタマイズ
 
 この拡張アプリは、データファームが a-blog cms の運用改善に取り組む中で開発した実用品です。
